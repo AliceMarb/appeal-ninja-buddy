@@ -8,7 +8,7 @@ const Header: React.FC = () => {
       <div className="flex items-center gap-2">
         <FileText className="h-6 w-6 text-primary" />
         <h1 className="text-xl font-display font-medium">
-          Appeal<span className="text-primary">Buddy</span>
+          Claim<span className="text-primary">Buddy</span>
         </h1>
       </div>
     </header>
