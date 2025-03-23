@@ -21,13 +21,10 @@ const Landing = () => {
             <a href="#how-it-works" className="text-sm font-medium hover:text-primary transition-colors">
               How It Works
             </a>
-            <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">
-              Success Stories
-            </a>
           </nav>
           <Link to="/form">
             <Button size="sm">
-              Sign In
+              Start Your Appeal
             </Button>
           </Link>
         </div>
@@ -39,11 +36,11 @@ const Landing = () => {
           <div className="container mx-auto max-w-5xl">
             <div className="flex flex-col md:flex-row items-center gap-12">
               <div className="md:w-1/2 space-y-6">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                  Don't Take No For An Answer
-                </h1>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in animation-delay-100">
+                Your ally against <span className="text-primary">unjust claim</span> denials
+              </h1>
                 <p className="text-lg text-muted-foreground">
-                  Your insurance denied your claim? We help you fight back and win the coverage you deserve.
+                Empowering patients against unfair health insurance claim denials.
                 </p>
                 <div className="pt-4">
                   <Link to="/form">
@@ -52,13 +49,10 @@ const Landing = () => {
                     </Button>
                   </Link>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  70% of appeals are successful when done right
-                </p>
               </div>
               <div className="md:w-1/2">
                 <img 
-                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                  src="/appeal_buddy.png" 
                   alt="Person working on insurance appeal" 
                   className="rounded-lg shadow-lg w-full object-cover"
                 />
@@ -103,14 +97,14 @@ const Landing = () => {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <MessageSquare className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle>Clinician Support</CardTitle>
+                  <CardTitle>Clinician Outreach</CardTitle>
                   <CardDescription>
-                    Work with medical experts to update coding and documentation
+                    Get your clinicians on your side
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Our network of clinicians can review your case and provide updated coding or additional documentation to support your claim.
+                    We help you coordinate with your healthcare providers to update or correct medical codes that may be causing claim rejections.
                   </p>
                   <Link to="/form" className="text-primary text-sm font-medium flex items-center gap-1 hover:underline">
                     Get started <ArrowRight className="h-3 w-3" />
@@ -125,12 +119,12 @@ const Landing = () => {
                   </div>
                   <CardTitle>Settlement Negotiation</CardTitle>
                   <CardDescription>
-                    Professional negotiation with insurance companies
+                    Negotiate with insurance companies
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    When appeals fail, our experts can negotiate a settlement with your insurance company to reduce your financial burden.
+                    When appeals fail, we provide expert guidance on how to negotiate a settlement with your insurance company to reduce your financial burden.
                   </p>
                   <Link to="/form" className="text-primary text-sm font-medium flex items-center gap-1 hover:underline">
                     Get started <ArrowRight className="h-3 w-3" />
