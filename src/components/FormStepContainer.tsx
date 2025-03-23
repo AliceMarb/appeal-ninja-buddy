@@ -26,8 +26,10 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
   const { currentStep, setCurrentStep } = useAppealForm();
 
   const handleNext = () => {
-    if (onContinue) onContinue();
-    else setCurrentStep(currentStep + 1);
+    if (onContinue) {
+      onContinue();
+    }
+    setCurrentStep(currentStep + 1);
   };
 
   const handleBack = () => {
@@ -55,7 +57,7 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
         <Button
           onClick={handleNext}
           disabled={!canContinue}
-          className="button-primary"
+          className="button-primary flex items-center gap-2"
         >
           {isLastStep ? 'Generate Appeal' : 'Continue'}
           {!isLastStep && <ArrowRight className="h-4 w-4" />}
