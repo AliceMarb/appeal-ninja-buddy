@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from 'react';
 import { useAppealForm } from '../context/AppealFormContext';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,9 @@ interface FormStepContainerProps {
   subtitle?: string;
   canContinue?: boolean;
   isLastStep?: boolean;
-  onContinue?: () => void;
+  onContinue?: () => boolean | void;
   steps: { label: string; isOptional: boolean }[];
+  disableContinue?: boolean;
 }
 
 const FormStepContainer: React.FC<FormStepContainerProps> = ({
@@ -21,16 +21,21 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
   canContinue = true,
   isLastStep = false,
   onContinue,
-  steps
+  steps,
+  disableContinue = false
 }) => {
   const { currentStep, setCurrentStep } = useAppealForm();
 
   const handleNext = () => {
     if (onContinue) {
-      onContinue();
+      const canProceed = onContinue();
+      // Only proceed to next step if onContinue returns true or undefined
+      if (canProceed === false) {
+        return;
+      }
     }
     
-    // Always move to the next step after onContinue is called (if provided)
+    // Move to next step if allowed
     setCurrentStep(currentStep + 1);
   };
 
@@ -56,9 +61,9 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
           Back
         </Button>
         
-        <Button
+        <Button 
           onClick={handleNext}
-          disabled={!canContinue}
+          disabled={!canContinue || disableContinue}
           className="button-primary flex items-center gap-2"
         >
           {isLastStep ? 'Generate Appeal' : 'Continue'}
