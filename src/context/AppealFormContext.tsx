@@ -9,7 +9,6 @@ interface FormState {
   memberId: string;
   policyDocument: File | null;
   policyDocumentFileId: string;
-  useMockResponse: boolean; 
 }
 
 interface AppealFormContextType {
@@ -23,7 +22,6 @@ interface AppealFormContextType {
   appealResult: AppealResult | null;
   setAppealResult: React.Dispatch<React.SetStateAction<AppealResult | null>>;
   submitAppeal: () => Promise<void>;
-  toggleMockResponse: () => void;
 }
 
 interface AppealResult {
@@ -49,30 +47,7 @@ const initialFormState: FormState = {
   policyNumber: '',
   memberId: '',
   policyDocument: null,
-  policyDocumentFileId: '',
-  useMockResponse: false, 
-};
-
-const mockApiResponse = {
-  message: "Appeal submission received successfully",
-  data: {
-    name: "Mock User",
-    dob: "",
-    denial_letter: "This is a mock denial letter",
-    policy_doc_file_id: "mock-file-id-12345",
-    additional_info: "Mock medical history"
-  },
-  result: {
-    decision: "appeal",
-    action_steps: [
-      "Review the denial letter and identify the insurer's reason for denial.",
-      "Gather medical records, a letter of medical necessity, and relevant insurance policy sections.",
-      "Draft and submit an appeal letter with supporting documents.",
-      "Follow up with the insurance provider for a decision update.",
-      "Seek external assistance if the appeal is denied (e.g., state insurance department)."
-    ],
-    appeal_letter: "Dear [Insurance Company],\n\nI am writing to formally appeal the denial of my claim [Claim Number] for [Service/Treatment], provided on [Date of Service] by [Healthcare Provider]. The denial reason stated was '[Denial Reason].'\n\nAccording to my physician, [Doctor Name], this treatment was medically necessary for my condition, as outlined in the attached supporting documentation. Additionally, per Section [Policy Section] of my insurance policy, this service should be covered.\n\nI kindly request a reconsideration of this decision based on the provided evidence. Please find enclosed medical records and a physician's letter supporting my appeal.\n\nThank you for your time and attention to this matter. I look forward to your response.\n\nSincerely,\n[Your Name]\n[Your Contact Information]\n[Your Policy Number]"
-  }
+  policyDocumentFileId: ''
 };
 
 const AppealFormContext = createContext<AppealFormContextType | undefined>(undefined);
@@ -188,16 +163,6 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
     setAppealResult(null);
   };
   
-  const toggleMockResponse = () => {
-    const currentValue = formState.useMockResponse;
-    setFormState(prev => ({
-      ...prev,
-      useMockResponse: !currentValue
-    }));
-    console.log(`Mock response ${!currentValue ? 'enabled' : 'disabled'}`);
-    toast.info(`Mock response ${!currentValue ? 'enabled' : 'disabled'}`);
-  };
-
   const submitAppeal = async () => {
     setIsGenerating(true);
     
@@ -209,36 +174,6 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
       console.log('\n==== DENIAL LETTER CONTENT ====');
       console.log(formState.denialLetter);
       console.log('================================\n');
-      
-      console.log('\n==== MOCK RESPONSE FLAG ====');
-      console.log('Using mock response:', formState.useMockResponse);
-      console.log('============================\n');
-      
-      if (formState.useMockResponse) {
-        console.log('\n==== USING MOCK RESPONSE ====');
-        console.log('Mock response:', mockApiResponse);
-        console.log('=============================\n');
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const formattedResult: AppealResult = {
-          message: mockApiResponse.message,
-          data: {
-            ...mockApiResponse.data,
-            name: formState.fullName || mockApiResponse.data.name,
-            denial_letter: formState.denialLetter || mockApiResponse.data.denial_letter,
-            policy_doc_file_id: formState.policyDocumentFileId || mockApiResponse.data.policy_doc_file_id,
-            additional_info: formState.medicalHistory || mockApiResponse.data.additional_info
-          },
-          result: mockApiResponse.result
-        };
-        
-        console.log('Setting formatted mock result:', formattedResult);
-        setAppealResult(formattedResult);
-        toast.success('Your appeal has been generated successfully! (MOCK)');
-        setIsGenerating(false);
-        return;
-      }
       
       const formData = new URLSearchParams();
       formData.append('name', formState.fullName);
@@ -318,8 +253,7 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
         setIsGenerating,
         appealResult,
         setAppealResult,
-        submitAppeal,
-        toggleMockResponse
+        submitAppeal
       }}
     >
       {children}
