@@ -70,7 +70,7 @@ const Index = () => {
       <main className="flex-1 flex flex-col justify-center items-center p-4">
         <div className="w-full max-w-md mb-6 animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-display font-medium text-center mb-2">
-            Appeal<span className="text-primary">Buddy</span>
+            Claim<span className="text-primary">Buddy</span>
           </h1>
           <p className="text-center text-muted-foreground">
             Your lawyer bestie for healthcare appeals
@@ -81,7 +81,7 @@ const Index = () => {
       </main>
       
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        <p>&#169; {new Date().getFullYear()} AppealBuddy. Your healthcare advocate.</p>
+        <p>&#169; {new Date().getFullYear()} ClaimBuddy. Your healthcare advocate.</p>
       </footer>
     </div>
   );

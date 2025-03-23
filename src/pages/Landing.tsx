@@ -11,7 +11,7 @@ const Landing = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <h1 className="text-xl md:text-2xl font-bold text-primary">
-              Appeal<span className="text-foreground">Buddy</span>
+              Claim<span className="text-foreground">Buddy</span>
             </h1>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -217,7 +217,7 @@ const Landing = () => {
         <div className="container mx-auto max-w-5xl">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h3 className="font-bold text-white mb-4">AppealBuddy</h3>
+              <h3 className="font-bold text-white mb-4">ClaimBuddy</h3>
               <p className="text-sm">
                 Your advocate in the fight against unfair insurance claim denials.
               </p>
@@ -241,14 +241,14 @@ const Landing = () => {
             <div>
               <h4 className="font-bold text-white mb-4">Contact</h4>
               <ul className="space-y-2 text-sm">
-                <li>support@appealbuddy.com</li>
+                <li>support@claimbuddy.com</li>
                 <li>(800) 123-4567</li>
                 <li>Mon-Fri: 9am - 6pm EST</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-sm text-center">
-            <p>© {new Date().getFullYear()} AppealBuddy. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} ClaimBuddy. All rights reserved.</p>
           </div>
         </div>
       </footer>
