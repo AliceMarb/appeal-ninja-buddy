@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, FileText, MessageSquare, Scale } from 'lucide-react';
@@ -204,59 +203,6 @@ const Landing = () => {
           </div>
         </section>
         
-        {/* Testimonials */}
-        <section id="testimonials" className="py-20 px-4">
-          <div className="container mx-auto max-w-5xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Success Stories</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                See how we've helped people just like you win their appeals.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center mb-4">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full mb-4"></div>
-                    <h3 className="font-medium">Sarah L.</h3>
-                    <p className="text-sm text-muted-foreground">Medication Coverage</p>
-                  </div>
-                  <p className="text-sm text-center italic">
-                    "My insurance denied coverage for my medication claiming it wasn't medically necessary. AppealBuddy helped me craft the perfect appeal letter and my claim was approved within 3 weeks!"
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center mb-4">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full mb-4"></div>
-                    <h3 className="font-medium">Michael R.</h3>
-                    <p className="text-sm text-muted-foreground">Surgery Approval</p>
-                  </div>
-                  <p className="text-sm text-center italic">
-                    "After being denied for a necessary surgery, I was lost. The clinical coding support from AppealBuddy helped my doctor refile with the right codes, and my surgery was approved!"
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center mb-4">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full mb-4"></div>
-                    <h3 className="font-medium">Jennifer T.</h3>
-                    <p className="text-sm text-muted-foreground">Out-of-Network Care</p>
-                  </div>
-                  <p className="text-sm text-center italic">
-                    "When my appeal for out-of-network care was rejected, AppealBuddy's negotiation team got me a settlement that covered 70% of my costs instead of nothing. Worth every penny!"
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
         <section className="py-20 px-4 bg-primary text-white">
           <div className="container mx-auto max-w-5xl text-center">
