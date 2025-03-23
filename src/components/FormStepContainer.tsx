@@ -9,7 +9,9 @@ interface FormStepContainerProps {
   subtitle?: string;
   canContinue?: boolean;
   isLastStep?: boolean;
-  onContinue?: () => void;
+  onContinue?: () => boolean | void;
+  onSkip?: () => void;
+  showSkip?: boolean;
   steps: { label: string; isOptional: boolean }[];
   showBackButton?: boolean;
 }
@@ -28,10 +30,14 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
 
   const handleNext = () => {
     if (onContinue) {
-      onContinue();
+      const canProceed = onContinue();
+      // Only proceed to next step if onContinue returns true or undefined
+      if (canProceed === false) {
+        return;
+      }
     }
     
-    // Always move to the next step after onContinue is called (if provided)
+    // Move to next step if allowed
     setCurrentStep(currentStep + 1);
   };
 
@@ -59,14 +65,26 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
         )}
         {(!showBackButton || currentStep === 0) && <div />}
         
-        <Button
-          onClick={handleNext}
-          disabled={!canContinue}
-          className="button-primary flex items-center gap-2"
-        >
-          {isLastStep ? 'Generate Appeal' : 'Continue'}
-          {!isLastStep && <ArrowRight className="h-4 w-4" />}
-        </Button>
+        <div className="flex gap-2">
+          {showSkip && onSkip && (
+            <Button
+              variant="ghost"
+              onClick={onSkip}
+              className="flex items-center gap-1"
+            >
+              Skip
+            </Button>
+          )}
+          
+          <Button
+            onClick={handleNext}
+            disabled={disableContinue || !canContinue}
+            className="flex items-center gap-1"
+          >
+            {isLastStep ? 'Submit' : 'Continue'}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       
       <div className="mt-8 text-xs text-center text-muted-foreground">

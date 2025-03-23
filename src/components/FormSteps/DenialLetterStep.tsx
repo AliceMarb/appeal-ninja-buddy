@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAppealForm } from '../../context/AppealFormContext';
 import FormStepContainer from '../FormStepContainer';
