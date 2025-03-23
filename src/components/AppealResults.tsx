@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppealForm } from '../context/AppealFormContext';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,10 @@ const AppealResults: React.FC = () => {
   if (!appealResult) {
     return null;
   }
+
+  // Handle the API response format
+  const actionPlan = appealResult.actionPlan || [];
+  const appealLetter = appealResult.appealLetter || appealResult.appeal_letter || '';
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 animate-fade-in">
@@ -52,7 +55,7 @@ const AppealResults: React.FC = () => {
             </p>
             
             <div className="space-y-3">
-              {appealResult.actionPlan.map((item, index) => (
+              {actionPlan.map((item, index) => (
                 <ActionPlanItem
                   key={index}
                   index={index}
@@ -77,7 +80,7 @@ const AppealResults: React.FC = () => {
             </div>
             
             <div className="p-6 bg-white border border-border rounded-lg">
-              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: appealResult.appealLetter }} />
+              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: appealLetter }} />
             </div>
           </div>
         )}

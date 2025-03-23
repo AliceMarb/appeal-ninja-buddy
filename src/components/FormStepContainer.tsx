@@ -10,6 +10,8 @@ interface FormStepContainerProps {
   canContinue?: boolean;
   isLastStep?: boolean;
   onContinue?: () => boolean | void;
+  onSkip?: () => void;
+  showSkip?: boolean;
   steps: { label: string; isOptional: boolean }[];
   disableContinue?: boolean;
 }
@@ -21,6 +23,8 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
   canContinue = true,
   isLastStep = false,
   onContinue,
+  onSkip,
+  showSkip = false,
   steps,
   disableContinue = false
 }) => {
@@ -50,25 +54,37 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
       
       <div className="mb-8">{children}</div>
       
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={handleBack}
           disabled={currentStep === 0}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
         
-        <Button 
-          onClick={handleNext}
-          disabled={!canContinue || disableContinue}
-          className="button-primary flex items-center gap-2"
-        >
-          {isLastStep ? 'Generate Appeal' : 'Continue'}
-          {!isLastStep && <ArrowRight className="h-4 w-4" />}
-        </Button>
+        <div className="flex gap-2">
+          {showSkip && onSkip && (
+            <Button
+              variant="ghost"
+              onClick={onSkip}
+              className="flex items-center gap-1"
+            >
+              Skip
+            </Button>
+          )}
+          
+          <Button
+            onClick={handleNext}
+            disabled={disableContinue || !canContinue}
+            className="flex items-center gap-1"
+          >
+            {isLastStep ? 'Submit' : 'Continue'}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       
       <div className="mt-8 text-xs text-center text-muted-foreground">
