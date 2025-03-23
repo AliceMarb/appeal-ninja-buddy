@@ -52,7 +52,7 @@ const Landing = () => {
               </div>
               <div className="md:w-1/2">
                 <img 
-                  src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                  src="/appeal_buddy.png" 
                   alt="Person working on insurance appeal" 
                   className="rounded-lg shadow-lg w-full object-cover"
                 />
