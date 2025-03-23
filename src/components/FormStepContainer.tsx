@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from 'react';
 import { useAppealForm } from '../context/AppealFormContext';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ interface FormStepContainerProps {
   isLastStep?: boolean;
   onContinue?: () => void;
   steps: { label: string; isOptional: boolean }[];
+  showBackButton?: boolean;
 }
 
 const FormStepContainer: React.FC<FormStepContainerProps> = ({
@@ -21,7 +21,8 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
   canContinue = true,
   isLastStep = false,
   onContinue,
-  steps
+  steps,
+  showBackButton = true
 }) => {
   const { currentStep, setCurrentStep } = useAppealForm();
 
@@ -46,15 +47,17 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
       <div className="mb-8">{children}</div>
       
       <div className="flex justify-between">
-        <Button
-          variant="ghost"
-          onClick={handleBack}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
+        {showBackButton && currentStep !== 0 && (
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        )}
+        {(!showBackButton || currentStep === 0) && <div />}
         
         <Button
           onClick={handleNext}
