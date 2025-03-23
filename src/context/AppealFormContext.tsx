@@ -9,6 +9,7 @@ interface FormState {
   memberId: string;
   policyDocument: File | null;
   policyDocumentFileId: string;
+  useMockResponse: boolean; 
 }
 
 interface AppealFormContextType {
@@ -22,17 +23,23 @@ interface AppealFormContextType {
   appealResult: AppealResult | null;
   setAppealResult: React.Dispatch<React.SetStateAction<AppealResult | null>>;
   submitAppeal: () => Promise<void>;
-}
-
-interface AppealActionItem {
-  title: string;
-  description: string;
+  toggleMockResponse: () => void;
 }
 
 interface AppealResult {
-  actionPlan?: AppealActionItem[];
-  appealLetter?: string;
-  appeal_letter?: string;
+  message?: string;
+  data?: {
+    name: string;
+    dob: string;
+    denial_letter: string;
+    policy_doc_file_id: string;
+    additional_info: string;
+  };
+  result?: {
+    decision: string;
+    action_steps: string[];
+    appeal_letter: string;
+  };
 }
 
 const initialFormState: FormState = {
@@ -43,48 +50,122 @@ const initialFormState: FormState = {
   memberId: '',
   policyDocument: null,
   policyDocumentFileId: '',
+  useMockResponse: false, 
+};
+
+const mockApiResponse = {
+  message: "Appeal submission received successfully",
+  data: {
+    name: "Mock User",
+    dob: "",
+    denial_letter: "This is a mock denial letter",
+    policy_doc_file_id: "mock-file-id-12345",
+    additional_info: "Mock medical history"
+  },
+  result: {
+    decision: "appeal",
+    action_steps: [
+      "Review the denial letter and identify the insurer's reason for denial.",
+      "Gather medical records, a letter of medical necessity, and relevant insurance policy sections.",
+      "Draft and submit an appeal letter with supporting documents.",
+      "Follow up with the insurance provider for a decision update.",
+      "Seek external assistance if the appeal is denied (e.g., state insurance department)."
+    ],
+    appeal_letter: "Dear [Insurance Company],\n\nI am writing to formally appeal the denial of my claim [Claim Number] for [Service/Treatment], provided on [Date of Service] by [Healthcare Provider]. The denial reason stated was '[Denial Reason].'\n\nAccording to my physician, [Doctor Name], this treatment was medically necessary for my condition, as outlined in the attached supporting documentation. Additionally, per Section [Policy Section] of my insurance policy, this service should be covered.\n\nI kindly request a reconsideration of this decision based on the provided evidence. Please find enclosed medical records and a physician's letter supporting my appeal.\n\nThank you for your time and attention to this matter. I look forward to your response.\n\nSincerely,\n[Your Name]\n[Your Contact Information]\n[Your Policy Number]"
+  }
 };
 
 const AppealFormContext = createContext<AppealFormContextType | undefined>(undefined);
 
-// Function to make API requests with exponential backoff
+const generateCurlCommand = (url: string, options: RequestInit): string => {
+  const { method = 'GET', headers = {}, body } = options;
+  
+  let curlCommand = `curl -X ${method} \\
+`;
+  
+  Object.entries(headers).forEach(([key, value]) => {
+    curlCommand += `  -H '${key}: ${value}' \\
+`;
+  });
+  
+  if (body) {
+    if (typeof body === 'string') {
+      if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+        const params = new URLSearchParams(body);
+        const formattedBody = Array.from(params.entries())
+          .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+          .join('&');
+        curlCommand += `  -d '${formattedBody}' \\
+`;
+      } else {
+        curlCommand += `  -d '${body}' \\
+`;
+      }
+    } else {
+      curlCommand += `  -d 'Complex body type not shown' \\
+`;
+    }
+  }
+  
+  const actualUrl = url.replace('/api', 'https://fogg-your-claims-be-896897809220.us-central1.run.app');
+  curlCommand += `  '${actualUrl}'`;
+  
+  return curlCommand;
+};
+
 const fetchWithBackoff = async (
   url: string,
   options: RequestInit,
   maxRetries = 3,
-  baseDelay = 1000 // Start with 1 second delay
+  baseDelay = 1000 
 ): Promise<Response> => {
   let retries = 0;
+  
+  console.log('\n==== EQUIVALENT CURL COMMAND ====');
+  console.log(generateCurlCommand(url, options));
+  console.log('================================\n');
   
   while (retries < maxRetries) {
     try {
       const response = await fetch(url, options);
       
-      // If the request was successful or it's a 4xx error (client error), don't retry
+      console.log(`Response status: ${response.status} ${response.statusText}`);
+      
+      const responseClone = response.clone();
+      try {
+        const responseBody = await responseClone.text();
+        console.log('Response body:', responseBody);
+        
+        try {
+          const jsonBody = JSON.parse(responseBody);
+          console.log('Response JSON:', jsonBody);
+        } catch (e) {
+          // Not JSON, already logged as text
+        }
+      } catch (e) {
+        console.log('Could not read response body for logging');
+      }
+      
       if (response.ok || (response.status >= 400 && response.status < 500)) {
         return response;
       }
       
-      // For 5xx errors (server errors), we should retry with backoff
       throw new Error(`Server error: ${response.status}`);
     } catch (error) {
       retries++;
       
       if (retries >= maxRetries) {
         console.error(`Failed after ${maxRetries} retries:`, error);
-        throw error; // Re-throw the error after max retries
+        throw error; 
       }
       
-      // Calculate exponential backoff with jitter
       const delay = baseDelay * Math.pow(2, retries - 1) + Math.random() * 1000;
       console.log(`Retry ${retries}/${maxRetries} after ${Math.round(delay)}ms`);
       
-      // Wait for the calculated delay before retrying
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
   
-  // This should never be reached due to the throw in the retry loop
   throw new Error('Unexpected error in fetchWithBackoff');
 };
 
@@ -106,42 +187,77 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
     setCurrentStep(0);
     setAppealResult(null);
   };
+  
+  const toggleMockResponse = () => {
+    const currentValue = formState.useMockResponse;
+    setFormState(prev => ({
+      ...prev,
+      useMockResponse: !currentValue
+    }));
+    console.log(`Mock response ${!currentValue ? 'enabled' : 'disabled'}`);
+    toast.info(`Mock response ${!currentValue ? 'enabled' : 'disabled'}`);
+  };
 
   const submitAppeal = async () => {
     setIsGenerating(true);
     
     try {
-      // Log the policy document file ID in a format that's easy to copy
       console.log('\n==== POLICY DOCUMENT FILE ID FOR API CALL ====');
       console.log(formState.policyDocumentFileId);
       console.log('============================================\n');
       
-      // Log the denial letter content
       console.log('\n==== DENIAL LETTER CONTENT ====');
       console.log(formState.denialLetter);
       console.log('================================\n');
       
+      console.log('\n==== MOCK RESPONSE FLAG ====');
+      console.log('Using mock response:', formState.useMockResponse);
+      console.log('============================\n');
+      
+      if (formState.useMockResponse) {
+        console.log('\n==== USING MOCK RESPONSE ====');
+        console.log('Mock response:', mockApiResponse);
+        console.log('=============================\n');
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const formattedResult: AppealResult = {
+          message: mockApiResponse.message,
+          data: {
+            ...mockApiResponse.data,
+            name: formState.fullName || mockApiResponse.data.name,
+            denial_letter: formState.denialLetter || mockApiResponse.data.denial_letter,
+            policy_doc_file_id: formState.policyDocumentFileId || mockApiResponse.data.policy_doc_file_id,
+            additional_info: formState.medicalHistory || mockApiResponse.data.additional_info
+          },
+          result: mockApiResponse.result
+        };
+        
+        console.log('Setting formatted mock result:', formattedResult);
+        setAppealResult(formattedResult);
+        toast.success('Your appeal has been generated successfully! (MOCK)');
+        setIsGenerating(false);
+        return;
+      }
+      
       const formData = new URLSearchParams();
       formData.append('name', formState.fullName);
-      formData.append('dob', ''); // Empty as per the example
+      formData.append('dob', ''); 
       formData.append('policy_doc_file_id', formState.policyDocumentFileId);
-      formData.append('denial_letter', formState.denialLetter); // Use the actual denial letter text
+      formData.append('denial_letter', formState.denialLetter); 
       formData.append('additional_info', formState.medicalHistory);
       
-      // Use the proxy URL to avoid CORS issues
       const apiUrl = '/api/submit-appeal';
       
-      // Log the URL and request body
       console.log('Submitting appeal to:', apiUrl);
       console.log('Request body:', {
         name: formState.fullName,
         dob: '',
         policy_doc_file_id: formState.policyDocumentFileId,
-        denial_letter: formState.denialLetter, // Show the denial letter in the log
+        denial_letter: formState.denialLetter, 
         additional_info: formState.medicalHistory
       });
       
-      // Use fetchWithBackoff instead of fetch to implement exponential backoff
       const response = await fetchWithBackoff(apiUrl, {
         method: 'POST',
         headers: {
@@ -149,26 +265,41 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: formData
-      }, 3, 1000); // Max 3 retries, starting with 1 second delay
+      }, 3, 1000); 
       
-      const data = await response.json();
-      
-      // Log the response
-      console.log('API Response:', {
-        status: response.status,
-        statusText: response.statusText,
-        data: data
-      });
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit appeal');
+      let data;
+      try {
+        data = await response.json();
+        
+        console.log('\n==== FULL API RESPONSE ====');
+        console.log('Status:', response.status, response.statusText);
+        console.log('Headers:', Object.fromEntries([...response.headers.entries()]));
+        console.log('Body:', data);
+        console.log('============================\n');
+      } catch (parseError) {
+        console.error('Error parsing response JSON:', parseError);
+        const textResponse = await response.text();
+        console.log('Raw response text:', textResponse);
+        throw new Error('Failed to parse response from server');
       }
       
-      // Use the actual API response
-      setAppealResult(data);
+      if (!response.ok) {
+        throw new Error(data.message || `Server error: ${response.status}`);
+      }
+      
+      const formattedResult: AppealResult = {
+        message: data.message,
+        data: data.data,
+        result: data.result
+      };
+      
+      console.log('Setting formatted appeal result:', formattedResult);
+      setAppealResult(formattedResult);
       toast.success('Your appeal has been generated successfully!');
     } catch (error) {
-      console.error('Error submitting appeal:', error);
+      console.error('\n==== ERROR SUBMITTING APPEAL ====');
+      console.error(error);
+      console.error('==================================\n');
       toast.error('Failed to generate appeal. Please try again.');
     } finally {
       setIsGenerating(false);
@@ -187,7 +318,8 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
         setIsGenerating,
         appealResult,
         setAppealResult,
-        submitAppeal
+        submitAppeal,
+        toggleMockResponse
       }}
     >
       {children}

@@ -1,12 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppealForm } from '../context/AppealFormContext';
 import { Button } from '@/components/ui/button';
-import ActionPlanItem from './ActionPlanItem';
-import { ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft, Download, Check } from 'lucide-react';
+
+const ActionPlanItem: React.FC<{ step: string; index: number }> = ({ step, index }) => {
+  return (
+    <div className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
+        {index + 1}
+      </div>
+      <div className="flex-1">
+        <p className="text-sm">{step}</p>
+      </div>
+    </div>
+  );
+};
 
 const AppealResults: React.FC = () => {
   const { appealResult, resetForm } = useAppealForm();
   const [activeTab, setActiveTab] = useState<'plan' | 'letter'>('plan');
+
+  // Debug log when component renders or appealResult changes
+  useEffect(() => {
+    if (appealResult) {
+      console.log('Appeal result in useEffect:', appealResult);
+      console.log('Action steps:', appealResult.result?.action_steps);
+      console.log('Appeal letter:', appealResult.result?.appeal_letter);
+    }
+  }, [appealResult]);
 
   const handleDownloadPDF = () => {
     // In a real implementation, this would generate and download a PDF
@@ -19,12 +40,16 @@ const AppealResults: React.FC = () => {
   };
 
   if (!appealResult) {
+    console.log('No appeal result available');
     return null;
   }
 
-  // Handle the API response format
-  const actionPlan = appealResult.actionPlan || [];
-  const appealLetter = appealResult.appealLetter || appealResult.appeal_letter || '';
+  // Log the appeal result to help debug
+  console.log('Appeal result in render:', appealResult);
+
+  // Get the action steps and appeal letter from the result
+  const actionSteps = appealResult.result?.action_steps || [];
+  const appealLetter = appealResult.result?.appeal_letter || '';
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 animate-fade-in">
@@ -55,14 +80,19 @@ const AppealResults: React.FC = () => {
             </p>
             
             <div className="space-y-3">
-              {actionPlan.map((item, index) => (
-                <ActionPlanItem
-                  key={index}
-                  index={index}
-                  title={item.title}
-                  description={item.description}
-                />
-              ))}
+              {actionSteps && actionSteps.length > 0 ? (
+                actionSteps.map((step, index) => (
+                  <ActionPlanItem
+                    key={index}
+                    index={index}
+                    step={step}
+                  />
+                ))
+              ) : (
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">No action steps available.</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -80,7 +110,13 @@ const AppealResults: React.FC = () => {
             </div>
             
             <div className="p-6 bg-white border border-border rounded-lg">
-              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: appealLetter }} />
+              <div className="prose max-w-none whitespace-pre-wrap">
+                {appealLetter ? (
+                  appealLetter
+                ) : (
+                  <p className="text-muted-foreground">No appeal letter available.</p>
+                )}
+              </div>
             </div>
           </div>
         )}

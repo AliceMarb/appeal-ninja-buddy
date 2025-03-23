@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Upload, Check, Copy } from 'lucide-react';
+import { Upload, Check } from 'lucide-react';
 
 interface PolicyDocumentStepProps {
   steps: { label: string; isOptional: boolean }[];
@@ -79,14 +79,6 @@ const PolicyDocumentStep: React.FC<PolicyDocumentStepProps> = ({ steps }) => {
     }
   };
 
-  const copyFileIdToClipboard = () => {
-    if (fileId) {
-      navigator.clipboard.writeText(fileId)
-        .then(() => toast.success('File ID copied to clipboard'))
-        .catch(() => toast.error('Failed to copy File ID'));
-    }
-  };
-
   const handleContinue = () => {
     if (!uploadSuccess) {
       toast.error('Please upload a document first');
@@ -149,20 +141,6 @@ const PolicyDocumentStep: React.FC<PolicyDocumentStepProps> = ({ steps }) => {
             <div className="flex items-center justify-center gap-2 text-sm text-green-600">
               <Check className="h-4 w-4" />
               <span>Document uploaded successfully</span>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 bg-muted rounded-md">
-              <div className="text-sm truncate max-w-[80%]" title={fileId}>
-                <span className="font-semibold">File ID:</span> {fileId}
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={copyFileIdToClipboard}
-                title="Copy File ID"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         )}

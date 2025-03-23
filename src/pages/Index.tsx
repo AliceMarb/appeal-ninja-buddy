@@ -27,7 +27,8 @@ const Index = () => {
     setIsGenerating,
     appealResult,
     setAppealResult,
-    submitAppeal
+    submitAppeal,
+    toggleMockResponse
   } = useAppealForm();
 
   useEffect(() => {
@@ -36,6 +37,26 @@ const Index = () => {
       submitAppeal();
     }
   }, [currentStep, isGenerating, submitAppeal]);
+  
+  // Add keyboard shortcut listener for toggling mock response
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Command+Shift+M for Mac (⌘+⇧+M)
+      if ((e.metaKey && e.shiftKey && e.key === 'm') || 
+          // Also support Ctrl+Alt+M for non-Mac users
+          (e.ctrlKey && e.altKey && e.key === 'm')) {
+        toggleMockResponse();
+        // Prevent default browser behavior
+        e.preventDefault();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [toggleMockResponse]);
 
   const renderCurrentStep = () => {
     if (appealResult) {
