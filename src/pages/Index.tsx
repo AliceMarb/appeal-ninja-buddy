@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useAppealForm } from '../context/AppealFormContext';
 import Header from '../components/Header';
@@ -9,7 +8,7 @@ import PolicyInfoStep from '../components/FormSteps/PolicyInfoStep';
 import PolicyDocumentStep from '../components/FormSteps/PolicyDocumentStep';
 import GeneratingAppeal from '../components/GeneratingAppeal';
 import AppealResults from '../components/AppealResults';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 const formSteps = [
   { label: 'Name', isOptional: false },
@@ -29,7 +28,6 @@ const Index = () => {
     formState 
   } = useAppealForm();
   
-  // Mock appeal generation
   useEffect(() => {
     if (isGenerating) {
       const timer = setTimeout(() => {
