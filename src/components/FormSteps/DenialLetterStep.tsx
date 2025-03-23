@@ -45,6 +45,11 @@ const DenialLetterStep: React.FC<DenialLetterStepProps> = ({ steps }) => {
             className="min-h-[200px] text-base"
             autoFocus
           />
+          {!isValid && letter.trim().length > 0 && (
+            <p className="text-sm text-red-500 mt-1">
+              Please provide more details (at least 20 characters).
+            </p>
+          )}
         </div>
       </div>
     </FormStepContainer>

@@ -29,6 +29,8 @@ const FormStepContainer: React.FC<FormStepContainerProps> = ({
     if (onContinue) {
       onContinue();
     }
+    
+    // Always move to the next step after onContinue is called (if provided)
     setCurrentStep(currentStep + 1);
   };
 
