@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAppealForm } from '../../context/AppealFormContext';
 import FormStepContainer from '../FormStepContainer';
@@ -32,7 +33,6 @@ const NameStep: React.FC<NameStepProps> = ({ steps }) => {
       canContinue={isValid}
       onContinue={handleContinue}
       steps={steps}
-      showBackButton={false}
     >
       <div className="space-y-4">
         <div className="space-y-2">
