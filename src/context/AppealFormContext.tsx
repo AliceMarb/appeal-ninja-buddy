@@ -82,8 +82,7 @@ const generateCurlCommand = (url: string, options: RequestInit): string => {
     }
   }
   
-  const actualUrl = url.replace('/api', 'https://fogg-your-claims-be-896897809220.us-central1.run.app');
-  curlCommand += `  '${actualUrl}'`;
+  curlCommand += `  '${url}'`;
   
   return curlCommand;
 };
@@ -182,7 +181,7 @@ export const AppealFormProvider: React.FC<{ children: ReactNode }> = ({ children
       formData.append('denial_letter', formState.denialLetter); 
       formData.append('additional_info', formState.medicalHistory);
       
-      const apiUrl = '/api/submit-appeal';
+      const apiUrl = 'https://fogg-your-claims-be-896897809220.us-central1.run.app/submit-appeal';
       
       console.log('Submitting appeal to:', apiUrl);
       console.log('Request body:', {
