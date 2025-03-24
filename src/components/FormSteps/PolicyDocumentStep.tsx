@@ -98,7 +98,7 @@ const PolicyDocumentStep: React.FC<PolicyDocumentStepProps> = ({ steps }) => {
       canContinue={uploadSuccess}
       onContinue={handleContinue}
       onSkip={handleSkip}
-      showSkip={steps[4].isOptional}
+      showSkip={false}
       steps={steps}
     >
       <div className="space-y-6">
