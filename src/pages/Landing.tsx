@@ -226,7 +226,7 @@ const Landing = () => {
               <h4 className="font-bold text-white mb-4">Services</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link to="/form" className="hover:text-white transition-colors">Appeal Letters</Link></li>
-                <li><Link to="/form" className="hover:text-white transition-colors">Clinician Support</Link></li>
+                <li><Link to="/form" className="hover:text-white transition-colors">Clinician Outreach</Link></li>
                 <li><Link to="/form" className="hover:text-white transition-colors">Settlement Negotiation</Link></li>
               </ul>
             </div>
